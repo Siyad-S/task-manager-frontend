@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task Manager</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+      }
+      .task {
+        margin-bottom: 20px;
+      }
+      .task-heading {
+        margin-bottom: 10px;
+      }
+      .task-block {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-bottom: 20px;
+      }
+      .task-input {
+        width: calc(100% - 20px);
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+      }
+      .add-remove-input {
+        margin-left: 10px;
+        padding: 5px 10px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .input-container {
+        margin-bottom: 10px;
+      }
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.4);
+      }
+      .modal-content {
+        background-color: #fefefe;
+        margin: 20% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 60%;
+        border-radius: 5px;
+        box-sizing: border-box;
+      }
+      .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+      }
+      .close:hover,
+      .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+      }
+      #openModalBtn,
+      #save_tasks {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+      #openModalBtn:hover,
+      #save_tasks:hover {
+        background-color: #0056b3;
+      }
+      #saveBtn {
+        padding: 10px 20px;
+        background-color: #28a745;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-top: 10px;
+      }
+      #saveBtn:hover {
+        background-color: #218838;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <h2 style="text-align: center">Task Manager</h2>
+      <div class="container">
+
+
+        <div id="myModal" class="modal">
+          <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Add New Block</h2>
+            <input
+              type="text"
+              id="blockTitle"
+              class="task-input"
+              placeholder="Enter block title"
+            />
+            <select id="blockType" class="task-input">
+              <option value="task">Task</option>
+              <option value="groupedTask">Grouped Tasks</option>
+            </select>
+            <button id="saveBtn" onclick="saveBlock()">Save</button>
+          </div>
+        </div>
+        <div id="myModal2" class="modal">
+          <div class="modal-content">
+            <span class="close" onclick="closePinModal()">&times;</span>
+            <h2>Enter Pin</h2>
+            <input
+              type="text"
+              id="blockTitle"
+              class="task-input"
+              placeholder="Enter pin"
+            />
+            <button id="saveBtn" onclick="saveBlock()">Save</button>
+          </div>
+        </div>
+      </div>
+      <div style="text-align: center">
+        <button id="openModalBtn" onclick="openModal()">Add Task</button>
+        <button id="save_tasks" onclick="openPinModal()">Save</button>
+      </div>
+    </div>
+
+    <script>
+      const modal = document.getElementById("myModal");
+      const pinModal = document.getElementById("myModal2");
+      const openModalBtn = document.getElementById("openModalBtn");
+      const openPinModalBtn = document.getElementById("openModalBtn");
+
+      function openModal() {
+        modal.style.display = "block";
+      }
+
+      function closeModal() {
+        modal.style.display = "none";
+      }
+
+      function openPinModal() {
+        pinModal.style.display = "block";
+      }
+
+      function closePinModal() {
+        pinModal.style.display = "none";
+      }      
+
+      function addInput(btn) {
+        const inputContainer = btn.parentNode;
+        const newInput = document.createElement("div");
+        newInput.classList.add("input-container");
+        newInput.innerHTML = `
+      <input type="text" class="task-input" placeholder="Input ${
+        inputContainer.children.length + 1
+      }">
+      <button class="add-remove-input" onclick="removeInput(this)">-</button>
+    `;
+        inputContainer.parentNode.insertBefore(
+          newInput,
+          inputContainer.nextSibling
+        );
+      }
+
+      function removeInput(btn) {
+        btn.parentNode.remove();
+      }
+
+      function saveBlock() {
+        const blockTitle = document.getElementById("blockTitle").value;
+        const blockType = document.getElementById("blockType").value;
+        const container = document.querySelector(".container");
+
+        if (blockType === "task") {
+          const newTaskBlock = document.createElement("div");
+          newTaskBlock.classList.add("task");
+          newTaskBlock.innerHTML = `
+        <div class="task-block">
+          <h2 class="task-heading">${blockTitle}</h2>
+          <div class="input-container">
+            <textarea class="task-input" placeholder="Enter text here"></textarea>
+          </div>
+        </div>
+      `;
+          container.appendChild(newTaskBlock);
+        } else if (blockType === "groupedTask") {
+          const newGroupedTaskBlock = document.createElement("div");
+          newGroupedTaskBlock.classList.add("task");
+          newGroupedTaskBlock.innerHTML = `
+        <div class="task-block">
+          <h2 class="task-heading">${blockTitle}</h2>
+          <div id="dynamicInputs">
+            <div class="input-container">
+              <input type="text" class="task-input" placeholder="Input 1">
+              <button class="add-remove-input" onclick="addInput(this)">+</button>
+            </div>
+          </div>
+        </div>
+      `;
+          container.appendChild(newGroupedTaskBlock);
+        }
+
+        closeModal();
+      }
+    </script>
+  </body>
+</html>
